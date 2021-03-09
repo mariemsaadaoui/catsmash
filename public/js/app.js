@@ -1937,7 +1937,8 @@ __webpack_require__.r(__webpack_exports__);
     var _this = this;
 
     axios.get('http://catsmash.test/catsList').then(function (response) {
-      return _this.cats = response.data;
+      _this.cats = response.data;
+      console.log(response.data + 'hello');
     })["catch"](function (error) {
       return console.log(error);
     });
@@ -1994,38 +1995,82 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      index: 0,
-      image1: null,
-      image2: null,
-      images: []
+      index1: 0,
+      index2: 1,
+      images: [],
+      catToEdit: []
     };
   },
+
+  /*created() {
+      axios.get('http://catsmash.test/catsList')
+          .then(response => 
+              {this.images = response.data;
+               //this.switchImage(this.images);
+              console.log(this.images + 'bonjour');
+              console.log(this.images[0] + 'bonbon');
+              })
+          .catch(error => console.log(error));
+  },*/
   mounted: function mounted() {
-    this.switchImage1();
-    this.switchImage2();
+    var _this = this;
+
+    axios.get('http://catsmash.test/catsList').then(function (response) {
+      _this.images = response.data;
+    })["catch"](function (error) {
+      return console.log(error);
+    });
+    console.log('Component mounted.');
   },
   methods: {
-    getCats: function getCats() {
-      axios.get('http://catsmash.test/catsList').then(function (response) {
-        return response.data;
+    switchImage1: function switchImage1() {
+      if (this.index1 != this.index2 && this.index1 < this.images.length) {
+        this.index1 = this.index1++;
+      } else {
+        this.index1 = (this.index1 + 2) % this.images.length;
+      }
+
+      if (this.images[this.index1].id == this.images[this.index2].id) {
+        if (this.index1 == this.images.length - 1) {
+          this.index1 = 0;
+        } else {
+          this.index1++;
+        }
+      }
+    },
+    switchImage2: function switchImage2() {
+      if (this.index2 != this.index1) {
+        this.index2 = (this.index2 + 1) % this.images.length;
+      } else {
+        this.index2 = (this.index2 + 2) % this.images.length;
+      }
+
+      if (this.images[this.index1].id == this.images[this.index2].id) {
+        if (this.index2 == this.images.length) {
+          this.index2 = 1;
+        } else {
+          this.index2++;
+        }
+      }
+    },
+    addVote: function addVote(id) {
+      var _this2 = this;
+
+      axios.get('http://catsmash.test/catsList/edit/' + id).then(function (response) {
+        _this2.catToEdit = response.data;
+        console.log(_this2.catToEdit + 'aaaaaaaaaa');
       })["catch"](function (error) {
         return console.log(error);
       });
-    },
-    switchImage1: function switchImage1() {
-      this.images = this.getCats();
-      console.log(this.getCats() + 'bonjour');
-      this.image1 = this.images[this.index];
-      this.image2 = this.images[this.index + 1]; //if(this.image1.id != this.image2.id) {
-      //console.log(this.image1);
-
-      this.index = (this.index + 1) % this.images.length; //console.log(this.index);
-      //}
-    },
-    switchImage2: function switchImage2() {
-      this.images = this.getCats();
-      this.image2 = this.images[this.index + 1];
-      this.index = (this.index + 1) % this.images.length;
+      console.log(this.catToEdit + 'hhhhhhhhhhh');
+      this.catToEdit.votes++;
+      axios.post('http://catsmash.test/catsList/edit/' + this.catToEdit.id, {
+        votes: this.catToEdit.votes
+      }).then(function (response) {
+        return console.log(response.data + 'fffffffffff');
+      })["catch"](function (error) {
+        return console.log(error);
+      });
     }
   }
 });
@@ -38383,19 +38428,26 @@ var render = function() {
       _c("ul", { staticClass: "list-group list-group-horizontal" }, [
         _c("li", { staticClass: "list-group-item" }, [
           _c("div", [
-            _vm.image1
+            _vm.images[_vm.index1]
               ? _c("img", {
-                  key: _vm.image1.id,
+                  key: _vm.images[_vm.index1].id,
                   staticClass: "image",
-                  attrs: { src: _vm.image1.image_url },
-                  on: { click: _vm.switchImage1 }
+                  attrs: { src: _vm.images[_vm.index1].image_url },
+                  on: {
+                    click: function($event) {
+                      _vm.switchImage1()
+                      _vm.addVote(_vm.images[_vm.index1].id)
+                    }
+                  }
                 })
               : _vm._e(),
             _vm._v(" "),
             _c("ul", [
-              _c("li", [_vm._v(_vm._s(_vm.image1.image_id))]),
+              _c("li", [_vm._v(_vm._s(_vm.images[_vm.index1].image_id))]),
               _vm._v(" "),
-              _c("li", [_vm._v("Score:  " + _vm._s(_vm.image1.votes) + " ")])
+              _c("li", [
+                _vm._v("Score:  " + _vm._s(_vm.images[_vm.index1].votes) + " ")
+              ])
             ])
           ])
         ]),
@@ -38404,19 +38456,26 @@ var render = function() {
         _vm._v(" "),
         _c("li", { staticClass: "list-group-item" }, [
           _c("div", [
-            _vm.image2
+            _vm.images[_vm.index2]
               ? _c("img", {
-                  key: _vm.image2.id,
+                  key: _vm.images[_vm.index2].id,
                   staticClass: "image",
-                  attrs: { src: _vm.image2.image_url },
-                  on: { click: _vm.switchImage2 }
+                  attrs: { src: _vm.images[_vm.index2].image_url },
+                  on: {
+                    click: function($event) {
+                      _vm.switchImage2()
+                      _vm.addVote(_vm.images[_vm.index2].id)
+                    }
+                  }
                 })
               : _vm._e(),
             _vm._v(" "),
             _c("ul", [
-              _c("li", [_vm._v(_vm._s(_vm.image2.image_id))]),
+              _c("li", [_vm._v(_vm._s(_vm.images[_vm.index2].image_id))]),
               _vm._v(" "),
-              _c("li", [_vm._v("Score:  " + _vm._s(_vm.image2.votes) + " ")])
+              _c("li", [
+                _vm._v("Score:  " + _vm._s(_vm.images[_vm.index2].votes) + " ")
+              ])
             ])
           ])
         ])
@@ -53920,15 +53979,14 @@ __webpack_require__.r(__webpack_exports__);
 /*!***************************************************!*\
   !*** ./resources/js/components/VoteComponent.vue ***!
   \***************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _VoteComponent_vue_vue_type_template_id_5677db58___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./VoteComponent.vue?vue&type=template&id=5677db58& */ "./resources/js/components/VoteComponent.vue?vue&type=template&id=5677db58&");
 /* harmony import */ var _VoteComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./VoteComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/VoteComponent.vue?vue&type=script&lang=js&");
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _VoteComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _VoteComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var _VoteComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./VoteComponent.vue?vue&type=style&index=0&lang=css& */ "./resources/js/components/VoteComponent.vue?vue&type=style&index=0&lang=css&");
+/* empty/unused harmony star reexport *//* harmony import */ var _VoteComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./VoteComponent.vue?vue&type=style&index=0&lang=css& */ "./resources/js/components/VoteComponent.vue?vue&type=style&index=0&lang=css&");
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -53960,7 +54018,7 @@ component.options.__file = "resources/js/components/VoteComponent.vue"
 /*!****************************************************************************!*\
   !*** ./resources/js/components/VoteComponent.vue?vue&type=script&lang=js& ***!
   \****************************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

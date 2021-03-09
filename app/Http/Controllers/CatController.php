@@ -64,7 +64,8 @@ class CatController extends Controller
      */
     public function edit($id)
     {
-        //
+        $cat = Cat::find($id);
+        return response()->json($cat);
     }
 
     /**
@@ -74,9 +75,16 @@ class CatController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update($id)
     {
-        //
+        $cat = Cat::find($id);
+        $cat->votes = request('votes');
+        $cat->save();
+
+        if($cat) {
+            return response()->json($cats);
+            //return $this->refresh();
+        }
     }
 
     /**
@@ -88,5 +96,10 @@ class CatController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    private function refresh() {
+        $cats = Cat::orderBy('votes', 'DESC')->paginate(3);
+        return response()->json($cats);
     }
 }

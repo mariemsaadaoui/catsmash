@@ -26,7 +26,10 @@
         },
         created() {
             axios.get('http://catsmash.test/catsList')
-            .then(response => this.cats = response.data)
+            .then(response => 
+            {this.cats = response.data;
+            console.log(response.data + 'hello');}
+            )
             .catch(error => console.log(error));
         },
         mounted() {

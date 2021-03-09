@@ -26,6 +26,8 @@ Route::get('/', function () {
 //Route::get('/cats',[CatController::class, 'index']);
 //Route::post('/store',[CatController::class, 'store']);
 Route::get('/catsList','CatController@index');
+Route::get('/catsList/edit/{id}', 'CatController@edit');
+Route::post('/catsList/edit/{id}', 'CatController@update');
 Route::get('/insert-json-file-to-database-table', function(){
 	$json = file_get_contents(storage_path('cats.json'));
 	$cats = json_decode($json,true);

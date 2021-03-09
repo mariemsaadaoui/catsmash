@@ -7,10 +7,10 @@
             <ul class="list-group list-group-horizontal">
                <li class="list-group-item">
                    <div>
-                   <img v-if= "image1" :key= "image1.id" @click= "switchImage1" class="image" v-bind:src= "image1.image_url">
+                        <img v-if= "images[index1]" :key= "images[index1].id" @click= "switchImage1(); addVote(images[index1].id);" class="image" v-bind:src= "images[index1].image_url">
                     <ul>
-                           <li>{{ image1.image_id }}</li>
-                           <li>Score:  {{image1.votes}} </li>
+                           <li>{{ images[index1].image_id }}</li>
+                           <li>Score:  {{images[index1].votes}} </li>
                     </ul>
                    </div>
                </li>
@@ -19,10 +19,10 @@
                </li>
                <li class="list-group-item">
                    <div>
-                      <img v-if= "image2" :key= "image2.id" @click= "switchImage2" class="image" v-bind:src= "image2.image_url"> 
+                      <img v-if= "images[index2]" :key= "images[index2].id" @click= "switchImage2(); addVote(images[index2].id);" class="image" v-bind:src= "images[index2].image_url"> 
                     <ul>
-                           <li>{{ image2.image_id }}</li>
-                           <li>Score:  {{image2.votes}} </li>
+                           <li>{{ images[index2].image_id }}</li>
+                           <li>Score:  {{images[index2].votes}} </li>
                     </ul> 
                    </div>
                </li>
@@ -35,37 +35,79 @@
     export default {
         data() {
             return {
-                  index: 0,
-                  image1: null,
-                  image2: null,
-                  images: []
+                  index1: 0,
+                  index2: 1,
+                  images: [],
+                  catToEdit: []
             }
         },
+        /*created() {
+            axios.get('http://catsmash.test/catsList')
+                .then(response => 
+                    {this.images = response.data;
+                     //this.switchImage(this.images);
+                    console.log(this.images + 'bonjour');
+                    console.log(this.images[0] + 'bonbon');
+                    })
+                .catch(error => console.log(error));
+        },*/
         mounted() {
-            this.switchImage1();
-            this.switchImage2();
+            axios.get('http://catsmash.test/catsList')
+                .then(response => 
+                    {
+                    this.images = response.data;
+                    })
+                .catch(error => console.log(error));
+            console.log('Component mounted.')
+
         },
         methods: {
-            getCats() {
-                axios.get('http://catsmash.test/catsList')
-                .then(response => response.data)
-                .catch(error => console.log(error));
-            },
             switchImage1() {
-                this.images = this.getCats();
-                console.log(this.getCats() + 'bonjour')
-                this.image1 = this.images[this.index]
-                this.image2 = this.images[this.index + 1]
-                //if(this.image1.id != this.image2.id) {
-                //console.log(this.image1);
-                this.index = (this.index + 1) % this.images.length
-                //console.log(this.index);
-                //}
+                if((this.index1 != this.index2) && (this.index1 < this.images.length)) {
+                    this.index1 = this.index1++;
+                }
+                else {
+                    this.index1 = (this.index1 + 2) % this.images.length;
+
+                }
+                if (this.images[this.index1].id == this.images[this.index2].id) {
+                    if (this.index1 == this.images.length - 1) {
+                        this.index1 = 0;
+                    } else {
+                        this.index1++;
+                    }
+                }
+                
             },
             switchImage2() {
-                this.images = this.getCats();
-                this.image2 = this.images[this.index + 1]
-                this.index = (this.index + 1) % this.images.length
+                if(this.index2 != this.index1) {
+                    this.index2 = (this.index2 + 1) % this.images.length
+                }
+                else {
+                    this.index2 = (this.index2 + 2) % this.images.length
+                }
+                if (this.images[this.index1].id == this.images[this.index2].id) {
+                    if (this.index2 == this.images.length ) {
+                        this.index2 = 1;
+                    } else {
+                        this.index2++;
+                    }
+                }
+                
+            },
+            addVote(id) {
+                axios.get('http://catsmash.test/catsList/edit/' + id)
+                .then(response => {
+                    this.catToEdit = response.data;
+                    console.log(this.catToEdit + 'aaaaaaaaaa');
+                }).catch(error => console.log(error));
+                console.log(this.catToEdit + 'hhhhhhhhhhh');
+                    this.catToEdit.votes++;
+                    axios.post('http://catsmash.test/catsList/edit/' + this.catToEdit.id, {
+                         votes: this.catToEdit.votes
+                    })
+                    .then(response => console.log(response.data + 'fffffffffff'))
+                    .catch(error => console.log(error));
             }
         }
     }
