@@ -9,6 +9,7 @@ require('./bootstrap');
 window.Vue = require('vue');
 import VueRouter from 'vue-router';
 Vue.use(VueRouter);
+Vue.component('pagination', require('laravel-vue-pagination'));
 import Vote from './components/VoteComponent.vue';
 import Cats from './components/CatsComponent.vue';
 

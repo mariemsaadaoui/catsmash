@@ -37,8 +37,7 @@
             return {
                   index1: 0,
                   index2: 1,
-                  images: [],
-                  catToEdit: []
+                  images: []
             }
         },
         /*created() {
@@ -63,50 +62,47 @@
         },
         methods: {
             switchImage1() {
-                if((this.index1 != this.index2) && (this.index1 < this.images.length)) {
+                this.index1 = this.index1 + 1;
+                if(this.index1 == this.index2) {
+                    this.index1 = this.index1 + 1;
+                }
+                /*if(this.index1 != this.index2) {
                     this.index1 = this.index1++;
                 }
                 else {
                     this.index1 = (this.index1 + 2) % this.images.length;
 
                 }
-                if (this.images[this.index1].id == this.images[this.index2].id) {
-                    if (this.index1 == this.images.length - 1) {
+                if (this.images[this.index1].id == this.images[this.index2].id) {*/
+                if (this.index1 == this.images.length - 1) {
                         this.index1 = 0;
-                    } else {
-                        this.index1++;
-                    }
                 }
                 
             },
             switchImage2() {
-                if(this.index2 != this.index1) {
+                this.index2 = this.index2 + 1;
+                if(this.index2 == this.index1) {
+                    this.index2 = this.index2 + 1;
+                }
+                /*if(this.index2 != this.index1) {
                     this.index2 = (this.index2 + 1) % this.images.length
                 }
                 else {
                     this.index2 = (this.index2 + 2) % this.images.length
                 }
-                if (this.images[this.index1].id == this.images[this.index2].id) {
-                    if (this.index2 == this.images.length ) {
+                if (this.images[this.index1].id == this.images[this.index2].id) {*/
+                    if (this.index2 == this.images.length - 2) {
                         this.index2 = 1;
-                    } else {
-                        this.index2++;
-                    }
-                }
+                    } 
                 
             },
             addVote(id) {
-                axios.get('http://catsmash.test/catsList/edit/' + id)
-                .then(response => {
-                    this.catToEdit = response.data;
-                    console.log(this.catToEdit + 'aaaaaaaaaa');
-                }).catch(error => console.log(error));
-                console.log(this.catToEdit + 'hhhhhhhhhhh');
-                    this.catToEdit.votes++;
-                    axios.post('http://catsmash.test/catsList/edit/' + this.catToEdit.id, {
-                         votes: this.catToEdit.votes
+                    axios.post('http://catsmash.test/catsList/edit/' + id)
+                    .then(response => 
+                    {
+                        console.log(response.data + 'fffffffffff');
+                        console.log(response.data.votes + 'fffffffffff')
                     })
-                    .then(response => console.log(response.data + 'fffffffffff'))
                     .catch(error => console.log(error));
             }
         }

@@ -14,9 +14,15 @@ class CatController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index1(Request $request)
     {
         $cats = Cat::all();
+        return response()->json($cats);
+    }
+
+    public function index2(Request $request)
+    {
+        $cats = Cat::orderBy('votes', 'DESC')->paginate(3);
         return response()->json($cats);
     }
 
@@ -29,8 +35,8 @@ class CatController extends Controller
     {
         //$cats = Cat::all()->toArray();
         //return array_reverse($cats);
-        $cats = Cat::orderBy('created_at', 'desc')->get();
-        return response()->json($cats);
+        //$cats = Cat::orderBy('created_at', 'desc')->get();
+        //return response()->json($cats);
     }
 
     /**
@@ -78,11 +84,11 @@ class CatController extends Controller
     public function update($id)
     {
         $cat = Cat::find($id);
-        $cat->votes = request('votes');
+        $cat->votes = $cat->votes + 1;
         $cat->save();
 
         if($cat) {
-            return response()->json($cats);
+            return response()->json($cat);
             //return $this->refresh();
         }
     }
@@ -101,5 +107,29 @@ class CatController extends Controller
     private function refresh() {
         $cats = Cat::orderBy('votes', 'DESC')->paginate(3);
         return response()->json($cats);
+    }
+
+    public function insert() {
+        $json = file_get_contents(storage_path('cats.json'));
+	    $cats = json_decode($json,true);
+	    foreach ($cats as $cat)  {
+		    foreach ($cat as $key => $value) {
+                $value = Arr::add($value, 'votes', 0);
+                //dd($value);
+			    $insertArr[Str::slug($key, '-')] = $value;
+                //dd($insertArr[Str::slug($key, '-')]);
+		    }
+            $insertArr = array_map(function($tag) {
+                return array(
+                    'image_url' => $tag['url'],
+                    'image_id' => $tag['id'],
+                    'votes' => $tag['votes']
+                );
+            }, $insertArr);
+
+        //dd($insertArr);
+		DB::table('cats')->insert($insertArr);
+	    }
+	    dd("Finished adding data in examples table");
     }
 }
