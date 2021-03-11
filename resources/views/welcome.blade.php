@@ -11,10 +11,14 @@
     <body>
        <div id="app">
        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-           <a class="navbar-brand" href="#">Navbar</a>
-           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+           <a class="navbar-brand" href="/vote">
+               <router-link to="/" class="nav-link">
+                  CatsMash
+               </router-link>
+            </a>
+           <!--<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                <span class="navbar-toggler-icon"></span>
-           </button>
+           </button>-->
 
            <div class="collapse navbar-collapse" id="navbarSupportedContent">
                  <ul class="navbar-nav mr-auto">
@@ -35,7 +39,7 @@
        </div>
        </div>
     
-    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('js/app.js') }}" type="text/javascript"></script>
     </body>
 </html>
 

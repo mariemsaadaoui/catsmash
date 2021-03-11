@@ -53,7 +53,20 @@
                 {this.images = response.data
                 this.image2 = this.images[this.index + 1]
                 this.index = (this.index + 1) % this.images.length})
-            }
+            },
+            /*addVote(id) {
+                axios.get('http://catsmash.test/catsList/edit/' + id)
+                .then(response => {
+                    this.catToEdit = response.data;
+                    console.log(this.catToEdit + 'aaaaaaaaaa');
+                }).catch(error => console.log(error));
+                console.log(this.catToEdit + 'hhhhhhhhhhh');
+                    this.catToEdit.votes++;
+                    axios.patch('http://catsmash.test/catsList/edit/' + this.catToEdit.id + '/' + this.catToEdit.votes)
+            
+                    .then(response => console.log(response.data + 'fffffffffff'))
+                    .catch(error => console.log(error));
+            }*/
         }
     }
 </script>
