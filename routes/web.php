@@ -27,6 +27,7 @@ Route::get('/', function () {
 //Route::post('/store',[CatController::class, 'store']);
 Route::get('/catsList','CatController@index1');
 Route::get('/imagesList','CatController@index2');
-Route::get('/catsList/edit/{id}', 'CatController@edit');
+Route::get('/catsList/cat/{id}', 'CatController@edit');
 Route::post('/catsList/edit/{id}', 'CatController@update');
 Route::get('/insert-json-file-to-database-table', 'CatController@insert');
+Route::post('/insert', 'CatController@insertintodatabase');

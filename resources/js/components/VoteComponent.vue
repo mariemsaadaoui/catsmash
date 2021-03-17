@@ -7,7 +7,7 @@
             <ul class="list-group list-group-horizontal">
                <li class="list-group-item">
                    <div>
-                        <img v-if= "images[index1]" :key= "images[index1].id" @click= "switchImage1(); addVote(images[index1].id);" class="image" v-bind:src= "images[index1].image_url">
+                        <img v-if= "images[index1]" :key= "images[index1].id" @click= "addVote(images[index1].id); switchImage1();" class="image" v-bind:src= "images[index1].image_url">
                     <ul>
                            <li>{{ images[index1].image_id }}</li>
                            <li>Score:  {{images[index1].votes}} </li>
@@ -19,7 +19,7 @@
                </li>
                <li class="list-group-item">
                    <div>
-                      <img v-if= "images[index2]" :key= "images[index2].id" @click= "switchImage2(); addVote(images[index2].id);" class="image" v-bind:src= "images[index2].image_url"> 
+                      <img v-if= "images[index2]" :key= "images[index2].id" @click= "addVote(images[index2].id); switchImage2();" class="image" v-bind:src= "images[index2].image_url"> 
                     <ul>
                            <li>{{ images[index2].image_id }}</li>
                            <li>Score:  {{images[index2].votes}} </li>
@@ -35,65 +35,41 @@
     export default {
         data() {
             return {
+                  images: [],
                   index1: 0,
-                  index2: 1,
-                  images: []
+                  index2: 1
             }
         },
-        /*created() {
-            axios.get('http://catsmash.test/catsList')
-                .then(response => 
-                    {this.images = response.data;
-                     //this.switchImage(this.images);
-                    console.log(this.images + 'bonjour');
-                    console.log(this.images[0] + 'bonbon');
-                    })
-                .catch(error => console.log(error));
-        },*/
         mounted() {
             axios.get('http://catsmash.test/catsList')
                 .then(response => 
                     {
-                    this.images = response.data;
+                    this.images = response.data; 
+                    console.log(this.images[0].image_id); 
+                    console.log(this.images[1].image_id);  
+                    this.index1 = Math.floor(Math.random() * this.images.length);
+                    this.index2 = Math.floor(Math.random() * this.images.length);                   
                     })
                 .catch(error => console.log(error));
-            console.log('Component mounted.')
-
+            console.log('Component mounted.');
+            console.log(this.index1 + 'aaaaaaaaaaa');
+            console.log(this.index2 + 'bbbbbbbbbbb');
         },
         methods: {
             switchImage1() {
-                this.index1 = this.index1 + 1;
-                if(this.index1 == this.index2) {
-                    this.index1 = this.index1 + 1;
+                console.log(this.index1 + 'aaaaaaaaaaa');
+                this.index1 = Math.floor(Math.random() * this.images.length);
+                console.log(this.index1 + 'cccccccc');
+                console.log(this.index1  + '&&&&&&&' + this.index2);
+                if((this.images[this.index1].id == this.images[this.index2].id) || (this.images[this.index1].id == (this.images[this.index1].id -1))) {
+                   this.index1 = Math.floor(Math.random() * this.images.length);
                 }
-                /*if(this.index1 != this.index2) {
-                    this.index1 = this.index1++;
-                }
-                else {
-                    this.index1 = (this.index1 + 2) % this.images.length;
-
-                }
-                if (this.images[this.index1].id == this.images[this.index2].id) {*/
-                if (this.index1 == this.images.length - 1) {
-                        this.index1 = 0;
-                }
-                
             },
             switchImage2() {
-                this.index2 = this.index2 + 1;
-                if(this.index2 == this.index1) {
-                    this.index2 = this.index2 + 1;
+                this.index2 = Math.floor(Math.random() * this.images.length);
+                if((this.images[this.index2].id == this.images[this.index1].id) || (this.images[this.index2].id == (this.images[this.index2].id -1))) {
+                   this.index2 = Math.floor(Math.random() * this.images.length);
                 }
-                /*if(this.index2 != this.index1) {
-                    this.index2 = (this.index2 + 1) % this.images.length
-                }
-                else {
-                    this.index2 = (this.index2 + 2) % this.images.length
-                }
-                if (this.images[this.index1].id == this.images[this.index2].id) {*/
-                    if (this.index2 == this.images.length - 2) {
-                        this.index2 = 1;
-                    } 
                 
             },
             addVote(id) {
@@ -101,7 +77,7 @@
                     .then(response => 
                     {
                         console.log(response.data + 'fffffffffff');
-                        console.log(response.data.votes + 'fffffffffff')
+                        console.log(response.data.votes + 'fffffffffff');
                     })
                     .catch(error => console.log(error));
             }

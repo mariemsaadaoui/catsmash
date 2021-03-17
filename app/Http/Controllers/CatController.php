@@ -84,6 +84,7 @@ class CatController extends Controller
     public function update($id)
     {
         $cat = Cat::find($id);
+        //print_r($cat); die;
         $cat->votes = $cat->votes + 1;
         $cat->save();
 
@@ -107,6 +108,38 @@ class CatController extends Controller
     private function refresh() {
         $cats = Cat::orderBy('votes', 'DESC')->paginate(3);
         return response()->json($cats);
+    }
+
+    public function insertintodatabase() {
+        $arrContextOptions=array(
+            "ssl"=>array(
+                "verify_peer"=>false,
+                "verify_peer_name"=>false,
+            ),
+          ); 
+          $contents = file_get_contents("https://latelier.co/data/cats.json", false, stream_context_create($arrContextOptions));
+          $contents = utf8_encode($contents);
+          $results = json_decode($contents); 
+          foreach ($cats as $cat)  {
+		    foreach ($cat as $key => $value) {
+                $value = Arr::add($value, 'votes', 0);
+                //dd($value);
+			    $insertArr[Str::slug($key, '-')] = $value;
+                //dd($insertArr[Str::slug($key, '-')]);
+		    }
+            $insertArr = array_map(function($tag) {
+                return array(
+                    'image_url' => $tag['url'],
+                    'image_id' => $tag['id'],
+                    'votes' => $tag['votes']
+                );
+            }, $insertArr);
+
+        //dd($insertArr);
+		Cat::create($insertArr);
+	    }
+        dd("Finished adding data in examples table");
+                
     }
 
     public function insert() {

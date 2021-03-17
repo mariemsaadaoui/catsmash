@@ -2005,69 +2005,43 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      images: [],
       index1: 0,
-      index2: 1,
-      images: []
+      index2: 1
     };
   },
-
-  /*created() {
-      axios.get('http://catsmash.test/catsList')
-          .then(response => 
-              {this.images = response.data;
-               //this.switchImage(this.images);
-              console.log(this.images + 'bonjour');
-              console.log(this.images[0] + 'bonbon');
-              })
-          .catch(error => console.log(error));
-  },*/
   mounted: function mounted() {
     var _this = this;
 
     axios.get('http://catsmash.test/catsList').then(function (response) {
       _this.images = response.data;
+      console.log(_this.images[0].image_id);
+      console.log(_this.images[1].image_id);
+      _this.index1 = Math.floor(Math.random() * _this.images.length);
+      _this.index2 = Math.floor(Math.random() * _this.images.length);
     })["catch"](function (error) {
       return console.log(error);
     });
     console.log('Component mounted.');
+    console.log(this.index1 + 'aaaaaaaaaaa');
+    console.log(this.index2 + 'bbbbbbbbbbb');
   },
   methods: {
     switchImage1: function switchImage1() {
-      this.index1 = this.index1 + 1;
+      console.log(this.index1 + 'aaaaaaaaaaa');
+      this.index1 = Math.floor(Math.random() * this.images.length);
+      console.log(this.index1 + 'cccccccc');
+      console.log(this.index1 + '&&&&&&&' + this.index2);
 
-      if (this.index1 == this.index2) {
-        this.index1 = this.index1 + 1;
-      }
-      /*if(this.index1 != this.index2) {
-          this.index1 = this.index1++;
-      }
-      else {
-          this.index1 = (this.index1 + 2) % this.images.length;
-       }
-      if (this.images[this.index1].id == this.images[this.index2].id) {*/
-
-
-      if (this.index1 == this.images.length - 1) {
-        this.index1 = 0;
+      if (this.images[this.index1].id == this.images[this.index2].id || this.images[this.index1].id == this.images[this.index1].id - 1) {
+        this.index1 = Math.floor(Math.random() * this.images.length);
       }
     },
     switchImage2: function switchImage2() {
-      this.index2 = this.index2 + 1;
+      this.index2 = Math.floor(Math.random() * this.images.length);
 
-      if (this.index2 == this.index1) {
-        this.index2 = this.index2 + 1;
-      }
-      /*if(this.index2 != this.index1) {
-          this.index2 = (this.index2 + 1) % this.images.length
-      }
-      else {
-          this.index2 = (this.index2 + 2) % this.images.length
-      }
-      if (this.images[this.index1].id == this.images[this.index2].id) {*/
-
-
-      if (this.index2 == this.images.length - 2) {
-        this.index2 = 1;
+      if (this.images[this.index2].id == this.images[this.index1].id || this.images[this.index2].id == this.images[this.index2].id - 1) {
+        this.index2 = Math.floor(Math.random() * this.images.length);
       }
     },
     addVote: function addVote(id) {
@@ -39045,8 +39019,8 @@ var render = function() {
                   attrs: { src: _vm.images[_vm.index1].image_url },
                   on: {
                     click: function($event) {
-                      _vm.switchImage1()
                       _vm.addVote(_vm.images[_vm.index1].id)
+                      _vm.switchImage1()
                     }
                   }
                 })
@@ -39073,8 +39047,8 @@ var render = function() {
                   attrs: { src: _vm.images[_vm.index2].image_url },
                   on: {
                     click: function($event) {
-                      _vm.switchImage2()
                       _vm.addVote(_vm.images[_vm.index2].id)
+                      _vm.switchImage2()
                     }
                   }
                 })
